@@ -1,4 +1,4 @@
-        body {
+ body {
             font-family: 'Poppins', sans-serif;
             background: radial-gradient(circle at center, #1a472a 0%, #0a2f1a 100%);
             min-height: 100vh;
@@ -33,6 +33,11 @@
             background: linear-gradient(135deg, #be1e2d 0%, #ff4b2b 100%);
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(190, 30, 45, 0.4);
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, #2b58ff 0%, #1e90be 100%);
+            box-shadow: 0 4px 15px rgba(43, 88, 255, 0.4);
         }
 
         .btn-christmas:hover:not(:disabled) {
