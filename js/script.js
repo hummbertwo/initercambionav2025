@@ -1,9 +1,10 @@
-        /**
+/**
          * CONFIGURACIÓN: Pega aquí la URL de tu Web App de Google Apps Script
          */
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGHlveSItoqy1Cmflf7ZP0u23J4qevpBY70aBO6uub9sTCtpEC2RU5dncAOVNTFT5hOg/exec";
 
         let participants = [];
+        let isEditing = false;
 
         // --- EFECTO NIEVE ---
         const canvas = document.getElementById('snow-canvas');
@@ -46,11 +47,10 @@
             const container = document.getElementById('resultsContainer');
             
             if (!isValidUrl(SCRIPT_URL)) {
-                console.warn("URL de Apps Script no configurada o inválida.");
                 container.innerHTML = `
                     <div class="text-center py-10 text-orange-600 bg-orange-50 rounded-xl p-4 border border-orange-200">
                         <p class="font-bold">⚠️ Pendiente de Configuración</p>
-                        <p class="text-xs mt-2">Por favor, pega la URL de tu Google Apps Script en la variable SCRIPT_URL del código.</p>
+                        <p class="text-xs mt-2">Pega la URL del script en SCRIPT_URL.</p>
                     </div>`;
                 return;
             }
@@ -62,9 +62,34 @@
                 renderResults(document.getElementById('searchInput').value);
             } catch (error) {
                 console.error("Error al cargar:", error);
-                container.innerHTML = `<div class="text-center py-10 text-red-600">Error al conectar con la hoja de cálculo. Revisa la URL y que la aplicación esté publicada para "Cualquier persona".</div>`;
+                container.innerHTML = `<div class="text-center py-10 text-red-600">Error al conectar con la hoja.</div>`;
             }
         }
+
+        // Lógica para detectar si el usuario ya existe mientras escribe
+        const userNameInput = document.getElementById('userName');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const statusBadge = document.getElementById('statusBadge');
+
+        userNameInput.addEventListener('input', (e) => {
+            const name = e.target.value.trim().toLowerCase();
+            const existing = participants.find(p => p.nombre.toLowerCase() === name);
+            
+            if (existing && name !== "") {
+                isEditing = true;
+                submitBtn.classList.add('btn-update');
+                btnText.textContent = "Actualizar mis deseos 🔄";
+                statusBadge.classList.remove('hidden');
+                // Opcional: Autocompletar los deseos actuales
+                // document.getElementById('userWishes').value = existing.deseos; 
+            } else {
+                isEditing = false;
+                submitBtn.classList.remove('btn-update');
+                btnText.textContent = "¡Enviar a la Lista! 📜";
+                statusBadge.classList.add('hidden');
+            }
+        });
 
         const form = document.getElementById('wishlistForm');
         form.addEventListener('submit', async (e) => {
@@ -75,9 +100,7 @@
                 return;
             }
 
-            const submitBtn = document.getElementById('submitBtn');
             const btnLoader = document.getElementById('btnLoader');
-            const btnText = document.getElementById('btnText');
 
             const formData = new FormData(form);
             const data = {
@@ -87,7 +110,8 @@
 
             submitBtn.disabled = true;
             btnLoader.classList.remove('hidden');
-            btnText.textContent = "Sincronizando...";
+            const originalText = btnText.textContent;
+            btnText.textContent = isEditing ? "Actualizando..." : "Sincronizando...";
 
             try {
                 await fetch(SCRIPT_URL, {
@@ -101,11 +125,15 @@
                     particleCount: 150, 
                     spread: 70, 
                     origin: { y: 0.6 }, 
-                    colors: ['#be1e2d', '#1a472a', '#ffffff'] 
+                    colors: isEditing ? ['#2b58ff', '#ffffff'] : ['#be1e2d', '#1a472a', '#ffffff'] 
                 });
                 
-                showToast("¡Deseos enviados a la lista! 🎅");
+                showToast(isEditing ? "¡Lista actualizada correctamente! ✨" : "¡Deseos enviados a la lista! 🎅");
                 form.reset();
+                isEditing = false;
+                submitBtn.classList.remove('btn-update');
+                statusBadge.classList.add('hidden');
+                
                 setTimeout(fetchWishlist, 2000); 
             } catch (err) {
                 showToast("Error al enviar los datos.");
@@ -162,5 +190,4 @@
             }, 4000);
         }
 
-        // Carga inicial
         window.onload = fetchWishlist;
