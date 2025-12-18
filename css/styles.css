@@ -1,4 +1,4 @@
- body {
+        body {
             font-family: 'Poppins', sans-serif;
             background: radial-gradient(circle at center, #1a472a 0%, #0a2f1a 100%);
             min-height: 100vh;
@@ -82,3 +82,4 @@
             opacity: 0.8;
             filter: drop-shadow(0 0 10px white);
         }
+
