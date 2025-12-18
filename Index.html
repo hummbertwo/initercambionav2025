@@ -28,27 +28,27 @@
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Formulario con lógica de actualización -->
+            <!-- Formulario con lógica de edición real -->
             <section class="glass-card p-6 rounded-3xl border-t-8 border-red-600">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="text-2xl font-bold flex items-center gap-2 text-red-700">
                         <span>✍️</span> Mis Deseos
                     </h2>
-                    <span id="statusBadge" class="hidden text-[10px] font-bold uppercase px-2 py-1 bg-blue-100 text-blue-700 rounded-lg">Modo Edición</span>
+                    <span id="statusBadge" class="hidden text-[10px] font-bold uppercase px-2 py-1 bg-blue-100 text-blue-700 rounded-lg animate-pulse">Editando anterior</span>
                 </div>
                 <form id="wishlistForm" class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Mi Nombre</label>
                         <input type="text" id="userName" name="nombre" required placeholder="Ej. Ana Noel" 
-                            class="w-full mt-1 p-4 rounded-xl border-2 border-gray-100 focus:border-red-400 focus:ring-0 outline-none shadow-inner transition-colors">
-                        <p id="helperText" class="text-[10px] text-gray-500 mt-1 italic">Si ya te registraste, escribe tu nombre igual para cambiar tus deseos.</p>
+                            class="w-full mt-1 p-4 rounded-xl border-2 border-gray-100 focus:border-red-400 focus:ring-0 outline-none shadow-inner transition-all">
+                        <p id="helperText" class="text-[10px] text-gray-500 mt-1 italic">Escribe tu nombre para empezar o editar tu lista.</p>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">¿Qué deseo recibir?</label>
                         <textarea id="userWishes" name="deseos" required placeholder="Tallas, colores, hobbies..." 
-                            class="w-full mt-1 p-4 rounded-xl border-2 border-gray-100 focus:border-red-400 focus:ring-0 outline-none h-40 shadow-inner"></textarea>
+                            class="w-full mt-1 p-4 rounded-xl border-2 border-gray-100 focus:border-red-400 focus:ring-0 outline-none h-40 shadow-inner transition-all"></textarea>
                     </div>
-                    <button type="submit" id="submitBtn" class="btn-christmas w-full py-4 rounded-2xl text-white text-lg font-bold flex justify-center items-center gap-3 disabled:opacity-50">
+                    <button type="submit" id="submitBtn" class="btn-christmas w-full py-4 rounded-2xl text-white text-lg font-bold flex justify-center items-center gap-3 disabled:opacity-50 transition-all">
                         <span id="btnText">¡Enviar a la Lista! 📜</span>
                         <div id="btnLoader" class="loader hidden"></div>
                     </button>
@@ -83,6 +83,7 @@
     </div>
 <script src="/js/script.js"></script>
 </html>
+
 
 
 
