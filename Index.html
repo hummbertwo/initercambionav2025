@@ -23,8 +23,8 @@
             <div class="inline-block p-4 rounded-full bg-white shadow-xl mb-4 border-4 border-red-600">
                 <span class="text-5xl">🎁</span>
             </div>
-            <h1 class="text-5xl md:text-7xl font-bold christmas-title mb-2">Intercambio Mágico</h1>
-            <p class="text-red-100 text-xl font-light italic">¡Sincronizado con Google Sheets!</p>
+            <h1 class="text-5xl md:text-7xl font-bold christmas-title mb-2">Intercambio Familiar</h1>
+            <p class="text-red-100 text-xl font-light italic">¡Famila Sánchez Ruiz!</p>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -39,17 +39,17 @@
                 <form id="wishlistForm" class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Mi Nombre</label>
-                        <input type="text" id="userName" name="nombre" required placeholder="Ej. Ana Noel" 
+                        <input type="text" id="userName" name="nombre" required placeholder="Ej. Humberto Pérez" 
                             class="w-full mt-1 p-4 rounded-xl border-2 border-gray-100 focus:border-red-400 focus:ring-0 outline-none shadow-inner transition-all">
                         <p id="helperText" class="text-[10px] text-gray-500 mt-1 italic">Escribe tu nombre para empezar o editar tu lista.</p>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">¿Qué deseo recibir?</label>
-                        <textarea id="userWishes" name="deseos" required placeholder="Tallas, colores, hobbies..." 
+                        <textarea id="userWishes" name="deseos" required placeholder="Accesorios, Juguetes, Tallas, Colores, Comida..." 
                             class="w-full mt-1 p-4 rounded-xl border-2 border-gray-100 focus:border-red-400 focus:ring-0 outline-none h-40 shadow-inner transition-all"></textarea>
                     </div>
                     <button type="submit" id="submitBtn" class="btn-christmas w-full py-4 rounded-2xl text-white text-lg font-bold flex justify-center items-center gap-3 disabled:opacity-50 transition-all">
-                        <span id="btnText">¡Enviar a la Lista! 📜</span>
+                        <span id="btnText">¡Enviar Lista! 📜</span>
                         <div id="btnLoader" class="loader hidden"></div>
                     </button>
                 </form>
@@ -59,7 +59,7 @@
             <section class="glass-card p-6 rounded-3xl border-t-8 border-green-700">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold flex items-center gap-2 text-green-800">
-                        <span>🔍</span> Buscar Amigo
+                        <span>🔍</span> Buscar Familiar
                     </h2>
                     <button id="refreshBtn" class="text-green-700 hover:rotate-180 transition-transform duration-500">
                         🔄
@@ -68,7 +68,7 @@
                 <div class="relative mb-6">
                     <input type="text" id="searchInput" placeholder="Nombre de tu amigo..." 
                         class="w-full p-4 pl-12 rounded-xl border-2 border-gray-100 focus:border-green-400 focus:ring-0 outline-none shadow-inner">
-                    <span class="absolute left-4 top-4.5 text-xl">✨</span>
+                    <span class="absolute left-4 top-4.5 text-xl"></span>
                 </div>
 
                 <div id="resultsContainer" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
@@ -83,6 +83,7 @@
     </div>
 <script src="/js/script.js"></script>
 </html>
+
 
 
 
