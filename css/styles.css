@@ -1,0 +1,79 @@
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #1a472a 0%, #0a2f1a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .christmas-title {
+            font-family: 'Mountains of Christmas', cursive;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5), 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #snow-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(190, 30, 45, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            position: relative;
+        }
+
+        .btn-christmas {
+            background: linear-gradient(135deg, #be1e2d 0%, #ff4b2b 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(190, 30, 45, 0.4);
+        }
+
+        .btn-christmas:hover:not(:disabled) {
+            transform: scale(1.03) rotate(-1deg);
+            box-shadow: 0 6px 20px rgba(190, 30, 45, 0.6);
+        }
+
+        .gift-tag {
+            background: #fffcfc;
+            border-left: 6px solid #1a472a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .decoration {
+            position: absolute;
+            font-size: 3rem;
+            z-index: 5;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 10px white);
+        }
