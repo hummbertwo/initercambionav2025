@@ -1,10 +1,11 @@
-/**
+        /**
          * CONFIGURACIÓN: Pega aquí la URL de tu Web App de Google Apps Script
          */
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGHlveSItoqy1Cmflf7ZP0u23J4qevpBY70aBO6uub9sTCtpEC2RU5dncAOVNTFT5hOg/exec";
 
         let participants = [];
         let isEditing = false;
+        let lastDetectedName = "";
 
         // --- EFECTO NIEVE ---
         const canvas = document.getElementById('snow-canvas');
@@ -45,16 +46,13 @@
 
         async function fetchWishlist() {
             const container = document.getElementById('resultsContainer');
-            
             if (!isValidUrl(SCRIPT_URL)) {
                 container.innerHTML = `
                     <div class="text-center py-10 text-orange-600 bg-orange-50 rounded-xl p-4 border border-orange-200">
-                        <p class="font-bold">⚠️ Pendiente de Configuración</p>
-                        <p class="text-xs mt-2">Pega la URL del script en SCRIPT_URL.</p>
+                        <p class="font-bold">⚠️ Configuración Pendiente</p>
                     </div>`;
                 return;
             }
-
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
@@ -62,55 +60,62 @@
                 renderResults(document.getElementById('searchInput').value);
             } catch (error) {
                 console.error("Error al cargar:", error);
-                container.innerHTML = `<div class="text-center py-10 text-red-600">Error al conectar con la hoja.</div>`;
+                container.innerHTML = `<div class="text-center py-10 text-red-600">Error al conectar.</div>`;
             }
         }
 
-        // Lógica para detectar si el usuario ya existe mientras escribe
+        // --- NUEVA LÓGICA DE EDICIÓN ---
         const userNameInput = document.getElementById('userName');
+        const userWishesInput = document.getElementById('userWishes');
         const submitBtn = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
         const statusBadge = document.getElementById('statusBadge');
 
         userNameInput.addEventListener('input', (e) => {
-            const name = e.target.value.trim().toLowerCase();
-            const existing = participants.find(p => p.nombre.toLowerCase() === name);
+            const name = e.target.value.trim();
+            const lowerName = name.toLowerCase();
+            
+            // Buscar si el usuario existe para cargar sus datos
+            const existing = participants.find(p => p.nombre.toLowerCase() === lowerName);
             
             if (existing && name !== "") {
-                isEditing = true;
-                submitBtn.classList.add('btn-update');
-                btnText.textContent = "Actualizar mis deseos 🔄";
-                statusBadge.classList.remove('hidden');
-                // Opcional: Autocompletar los deseos actuales
-                // document.getElementById('userWishes').value = existing.deseos; 
+                if (lastDetectedName !== lowerName) {
+                    isEditing = true;
+                    lastDetectedName = lowerName;
+                    
+                    // Acción clave: Cargar los deseos previos para que el usuario los edite
+                    userWishesInput.value = existing.deseos;
+                    
+                    // Feedback visual de edición
+                    submitBtn.classList.add('btn-update');
+                    btnText.textContent = "Guardar cambios 🔄";
+                    statusBadge.classList.remove('hidden');
+                    userWishesInput.classList.add('border-blue-400');
+                }
             } else {
                 isEditing = false;
+                lastDetectedName = "";
                 submitBtn.classList.remove('btn-update');
                 btnText.textContent = "¡Enviar a la Lista! 📜";
                 statusBadge.classList.add('hidden');
+                userWishesInput.classList.remove('border-blue-400');
+                // No borramos el texto automáticamente por si el usuario está escribiendo y se equivoca en una letra
             }
         });
 
         const form = document.getElementById('wishlistForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            if (!isValidUrl(SCRIPT_URL)) {
-                showToast("Configura primero la URL del script.");
-                return;
-            }
+            if (!isValidUrl(SCRIPT_URL)) return;
 
             const btnLoader = document.getElementById('btnLoader');
-
-            const formData = new FormData(form);
             const data = {
-                nombre: formData.get('nombre'),
-                deseos: formData.get('deseos')
+                nombre: userNameInput.value.trim(),
+                deseos: userWishesInput.value.trim()
             };
 
             submitBtn.disabled = true;
             btnLoader.classList.remove('hidden');
-            const originalText = btnText.textContent;
             btnText.textContent = isEditing ? "Actualizando..." : "Sincronizando...";
 
             try {
@@ -128,16 +133,17 @@
                     colors: isEditing ? ['#2b58ff', '#ffffff'] : ['#be1e2d', '#1a472a', '#ffffff'] 
                 });
                 
-                showToast(isEditing ? "¡Lista actualizada correctamente! ✨" : "¡Deseos enviados a la lista! 🎅");
+                showToast(isEditing ? "¡Edición guardada! ✨" : "¡Registro completado! 🎅");
                 form.reset();
                 isEditing = false;
+                lastDetectedName = "";
                 submitBtn.classList.remove('btn-update');
                 statusBadge.classList.add('hidden');
+                userWishesInput.classList.remove('border-blue-400');
                 
                 setTimeout(fetchWishlist, 2000); 
             } catch (err) {
-                showToast("Error al enviar los datos.");
-                console.error(err);
+                showToast("Error al procesar.");
             } finally {
                 submitBtn.disabled = false;
                 btnLoader.classList.add('hidden');
@@ -145,36 +151,27 @@
             }
         });
 
-        // --- UI BÚSQUEDA ---
+        // --- BÚSQUEDA ---
         const searchInput = document.getElementById('searchInput');
-        const resultsContainer = document.getElementById('resultsContainer');
-
         searchInput.addEventListener('input', (e) => renderResults(e.target.value));
         document.getElementById('refreshBtn').onclick = fetchWishlist;
 
         function renderResults(queryStr) {
-            if (!isValidUrl(SCRIPT_URL) && participants.length === 0) return;
-
+            const resultsContainer = document.getElementById('resultsContainer');
             resultsContainer.innerHTML = "";
             if (!queryStr || queryStr.trim() === "") {
-                resultsContainer.innerHTML = `<div class="text-center py-10 text-gray-500 fade-in italic"><p>Busca un nombre para ver sus deseos.</p><span class="text-3xl block mt-2">🌲</span></div>`;
+                resultsContainer.innerHTML = `<div class="text-center py-10 text-gray-500 italic">Busca un nombre para ver sus deseos.</div>`;
                 return;
             }
-
             const filtered = participants.filter(p => p.nombre.toLowerCase().includes(queryStr.toLowerCase()));
-
             if (filtered.length === 0) {
-                resultsContainer.innerHTML = `<div class="text-center py-10 text-gray-400">No se encontró a nadie con ese nombre.</div>`;
+                resultsContainer.innerHTML = `<div class="text-center py-10 text-gray-400">No se encontró ese nombre.</div>`;
                 return;
             }
-
             filtered.forEach(person => {
                 const div = document.createElement('div');
                 div.className = "gift-tag p-5 rounded-2xl fade-in shadow-md mb-4 border border-red-50";
-                div.innerHTML = `
-                    <h3 class="font-bold text-red-800 text-xl">🎁 ${person.nombre}</h3>
-                    <p class="text-gray-700 mt-3 whitespace-pre-line text-sm leading-relaxed">${person.deseos}</p>
-                `;
+                div.innerHTML = `<h3 class="font-bold text-red-800 text-xl">🎁 ${person.nombre}</h3><p class="text-gray-700 mt-3 whitespace-pre-line text-sm leading-relaxed">${person.deseos}</p>`;
                 resultsContainer.appendChild(div);
             });
         }
@@ -191,3 +188,4 @@
         }
 
         window.onload = fetchWishlist;
+
